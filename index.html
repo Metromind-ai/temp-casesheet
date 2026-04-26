@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MetroMind — MCLA 2.3 Integrated Case Sheet</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <h1>MetroMind &middot; Integrated Case Sheet</h1>
+  <div class="subtitle">MCLA 2.3 — Pilot Edition with MRS &middot; Case Sheet + Scoring Handbook + Resistance Logic</div>
+</header>
+
+<main>
+<form id="caseForm" autocomplete="off">
+
+  <!-- =============================================================
+       PART 1 — INTEGRATED CASE SHEET
+  ============================================================== -->
+
+  <!-- SECTION A: BASIC DETAILS -->
+  <section class="card" data-section="A">
+    <header><h2>Section A &mdash; Basic Details <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="row">
+        <div class="field">
+          <label>Full Name <span style="color:#c0392b">*</span></label>
+          <input type="text" name="A.fullName" required placeholder="e.g., Priya Menon" />
+        </div>
+        <div class="field">
+          <label>Age / Sex</label>
+          <input type="text" name="A.ageSex" placeholder="e.g., 28 / F" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Address</label>
+        <textarea name="A.address"></textarea>
+      </div>
+      <div class="row-3">
+        <div class="field"><label>Education</label><input type="text" name="A.education"/></div>
+        <div class="field"><label>Occupation</label><input type="text" name="A.occupation"/></div>
+        <div class="field"><label>Socioeconomic status</label><input type="text" name="A.ses"/></div>
+      </div>
+      <div class="row-3">
+        <div class="field"><label>Marital Status</label><input type="text" name="A.marital"/></div>
+        <div class="field"><label>Religion</label><input type="text" name="A.religion"/></div>
+        <div class="field"><label>Referred by</label><input type="text" name="A.referredBy"/></div>
+      </div>
+      <div class="field">
+        <label>Informant (Name &amp; Relationship)</label>
+        <input type="text" name="A.informant" />
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Reliability</label>
+          <select name="A.reliability"><option value="">--</option><option>Reliable</option><option>Unreliable</option></select>
+        </div>
+        <div class="field">
+          <label>Adequacy</label>
+          <select name="A.adequacy"><option value="">--</option><option>Adequate</option><option>Inadequate</option></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Special comments</label>
+        <textarea name="A.comments"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION B: PRESENTING COMPLAINTS -->
+  <section class="card" data-section="B">
+    <header><h2>Section B &mdash; Presenting Complaints <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field">
+        <label>Presenting complaints (patient&rsquo;s words)</label>
+        <textarea name="B.complaints"></textarea>
+      </div>
+      <div class="row-3">
+        <div class="field"><label>Onset</label><input type="text" name="B.onset"/></div>
+        <div class="field">
+          <label>Course</label>
+          <select name="B.course"><option value="">--</option><option>Episodic</option><option>Continuous</option></select>
+        </div>
+        <div class="field"><label>Total duration of illness</label><input type="text" name="B.duration"/></div>
+      </div>
+      <p class="note"><strong>5Ps Formulation</strong></p>
+      <div class="field"><label>Presenting Problem</label><textarea name="B.5p.presenting"></textarea></div>
+      <div class="row">
+        <div class="field"><label>Predisposing factors</label><textarea name="B.5p.predisposing"></textarea></div>
+        <div class="field"><label>Precipitating factors</label><textarea name="B.5p.precipitating"></textarea></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Perpetuating factors</label><textarea name="B.5p.perpetuating"></textarea></div>
+        <div class="field"><label>Protective factors</label><textarea name="B.5p.protective"></textarea></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION C: HISTORY -->
+  <section class="card" data-section="C">
+    <header><h2>Section C &mdash; History <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field"><label>History of Presenting Illness</label><textarea name="C.hpi"></textarea></div>
+      <div class="field"><label>Past Psychiatric History</label><textarea name="C.pastPsych"></textarea></div>
+      <div class="field"><label>Medical History</label><textarea name="C.medical"></textarea></div>
+      <div class="field"><label>Substance Use</label><textarea name="C.substance"></textarea></div>
+    </div>
+  </section>
+
+  <!-- SECTION D: FAMILY HISTORY -->
+  <section class="card" data-section="D">
+    <header><h2>Section D &mdash; Family History <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field">
+        <label>Consanguinity</label>
+        <select name="D.consang"><option value="">--</option><option>Consanguineous</option><option>Non-consanguineous</option></select>
+      </div>
+      <div class="field"><label>3-generation family tree (notes)</label><textarea name="D.familyTree"></textarea></div>
+      <div class="row-3">
+        <div class="field"><label>Father</label><textarea name="D.father"></textarea></div>
+        <div class="field"><label>Mother</label><textarea name="D.mother"></textarea></div>
+        <div class="field"><label>Siblings</label><textarea name="D.siblings"></textarea></div>
+      </div>
+      <div class="field"><label>Psychiatric illness in family</label><textarea name="D.psychFamily"></textarea></div>
+    </div>
+  </section>
+
+  <!-- SECTION E: PERSONAL HISTORY -->
+  <section class="card" data-section="E">
+    <header><h2>Section E &mdash; Personal History <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field"><label>Birth and early development</label><textarea name="E.birth"></textarea></div>
+      <div class="field"><label>Education history</label><textarea name="E.education"></textarea></div>
+      <div class="field"><label>Occupation details</label><textarea name="E.occupation"></textarea></div>
+      <div class="field"><label>Sexual and marital history</label><textarea name="E.sexMarital"></textarea></div>
+      <div class="field"><label>Present living situation</label><textarea name="E.living"></textarea></div>
+      <div class="field"><label>Premorbid personality / temperament</label><textarea name="E.premorbid"></textarea></div>
+      <div class="field"><label>Best lifetime functioning</label><textarea name="E.bestFunctioning"></textarea></div>
+    </div>
+  </section>
+
+  <!-- SECTION F: MENTAL STATUS EXAMINATION -->
+  <section class="card" data-section="F">
+    <header><h2>Section F &mdash; Mental Status Examination <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field"><label>Appearance &amp; behaviour</label><textarea name="F.appearance"></textarea></div>
+      <div class="field"><label>Rapport</label><textarea name="F.rapport"></textarea></div>
+      <div class="field"><label>Psychomotor activity</label><textarea name="F.psychomotor"></textarea></div>
+      <div class="field"><label>Speech</label><textarea name="F.speech"></textarea></div>
+      <div class="field"><label>Thought (form &amp; content)</label><textarea name="F.thought"></textarea></div>
+      <div class="field"><label>Mood &amp; affect</label><textarea name="F.mood"></textarea></div>
+      <div class="field"><label>Perception</label><textarea name="F.perception"></textarea></div>
+      <p class="note"><strong>Cognitive Functions</strong></p>
+      <div class="row">
+        <div class="field"><label>Consciousness</label><input type="text" name="F.cog.consciousness"/></div>
+        <div class="field"><label>Orientation</label><input type="text" name="F.cog.orientation"/></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Attention &amp; concentration</label><input type="text" name="F.cog.attention"/></div>
+        <div class="field"><label>Memory</label><input type="text" name="F.cog.memory"/></div>
+      </div>
+      <div class="row-3">
+        <div class="field"><label>Intelligence</label><input type="text" name="F.cog.intelligence"/></div>
+        <div class="field"><label>Abstraction</label><input type="text" name="F.cog.abstraction"/></div>
+        <div class="field"><label>Judgment</label><input type="text" name="F.cog.judgment"/></div>
+      </div>
+      <div class="field"><label>Insight</label><input type="text" name="F.cog.insight"/></div>
+    </div>
+  </section>
+
+  <!-- SECTION G: RISK ASSESSMENT -->
+  <section class="card" data-section="G">
+    <header><h2>Section G &mdash; Risk Assessment <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field"><label>Suicidal ideation</label><textarea name="G.suicidal"></textarea></div>
+      <div class="field"><label>Self-harm risk</label><textarea name="G.selfHarm"></textarea></div>
+      <div class="field"><label>Harm to others</label><textarea name="G.harmOthers"></textarea></div>
+      <div class="field"><label>Impulsivity risk</label><textarea name="G.impulsivity"></textarea></div>
+      <div class="field"><label>Vulnerability / neglect</label><textarea name="G.vulnerability"></textarea></div>
+    </div>
+  </section>
+
+  <!-- =============================================================
+       SECTION H — MCLA 2.3 FIVE-LAYER ASSESSMENT
+       (Layer cards + MRS are rendered by script.js into #layersContainer)
+  ============================================================== -->
+  <section class="card" data-section="H-intro">
+    <header><h2>Section H &mdash; MCLA 2.3 Five-Layer Assessment <span class="pill">Part 1</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <p class="note">
+        <strong>Scoring:</strong> Each item = 0&ndash;3
+        (0 = None/normal, 1 = Mild/occasional, 2 = Moderate/frequent/impairing, 3 = Severe/persistent/major impairment).
+        Rate based on the last 2&ndash;4 weeks. Hover any score circle to see the behavioural anchor from the Mini Scoring Handbook.
+        <br><br>
+        <strong>Time Code:</strong> A = Acute (&lt;1 mo) &middot; S = Subacute (1&ndash;6 mo) &middot;
+        C = Chronic (&gt;6 mo) &middot; E = Episodic &middot; L = Lifelong.
+        <br>
+        <strong>Resistance:</strong> R0 Low &middot; R1 Mild &middot; R2 Moderate &middot; R3 High.
+      </p>
+    </div>
+  </section>
+
+  <div id="layersContainer"></div>
+
+  <!-- FINAL FORMULATION + RESISTANCE LOGIC -->
+  <section class="card" data-section="formulation">
+    <header><h2>Final Formulation + Resistance Logic <span class="pill">Section H</span></h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field">
+        <label>Layer Scores Summary (auto-filled, editable)</label>
+        <input type="text" name="FORM.scoresSummary" id="scoresSummary" placeholder="L1 .. / L2 .. / L3 .. / L4 .. / L5 .." />
+      </div>
+      <div class="formulation-grid">
+        <div class="field"><label>Dominant Active Layers (Top 2)</label><input type="text" name="FORM.dominant" /></div>
+        <div class="field"><label>Secondary Layers</label><input type="text" name="FORM.secondary" /></div>
+      </div>
+      <div class="field"><label>Interaction Chain</label><textarea name="FORM.interactionChain"></textarea></div>
+      <div class="field">
+        <label>Problem Type</label>
+        <div class="inline-options">
+          <label><input type="checkbox" name="FORM.problemType" value="Over"/> Over</label>
+          <label><input type="checkbox" name="FORM.problemType" value="Under"/> Under</label>
+          <label><input type="checkbox" name="FORM.problemType" value="Unstable"/> Unstable</label>
+          <label><input type="checkbox" name="FORM.problemType" value="Rigid"/> Rigid</label>
+          <label><input type="checkbox" name="FORM.problemType" value="Deep"/> Deep</label>
+          <label><input type="checkbox" name="FORM.problemType" value="Mixed"/> Mixed</label>
+        </div>
+      </div>
+      <div class="field"><label>Immediate Treatment Targets</label><textarea name="FORM.targets"></textarea></div>
+
+      <p class="note" style="margin-top:14px"><strong>Resistance per Layer</strong></p>
+      <div class="resist-grid" id="resistGrid"></div>
+
+      <div class="formulation-grid" style="margin-top:14px">
+        <div class="field"><label>Lowest Resistance Lever (best first target)</label><input type="text" name="FORM.lowestLever" /></div>
+        <div class="field"><label>Highest Resistance Core (address later)</label><input type="text" name="FORM.highestCore" /></div>
+      </div>
+      <div class="field"><label>Strategic Treatment Sequence</label><textarea name="FORM.strategy"></textarea></div>
+      <div class="field"><label>Treatment Map / Modalities</label><textarea name="FORM.treatmentMap"></textarea></div>
+    </div>
+  </section>
+
+  <!-- SECTION I: 5-Layer Formulation summary -->
+  <section class="card" data-section="I">
+    <header><h2>Section I &mdash; 5-Layer Formulation</h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field"><label>Layers summary</label><textarea name="I.summary"></textarea></div>
+      <div class="field"><label>Active Layers (Top 2&ndash;3)</label><input type="text" name="I.active"/></div>
+      <div class="field">
+        <label>Problem Type</label>
+        <select name="I.problemType">
+          <option value="">--</option>
+          <option>Overactive</option><option>Underactive</option>
+          <option>Unstable</option><option>Rigid</option>
+          <option>Deep pattern</option><option>Mixed</option>
+        </select>
+      </div>
+      <div class="field"><label>Resistance-adjusted treatment sequence</label><textarea name="I.treatmentSequence"></textarea></div>
+    </div>
+  </section>
+
+  <!-- SECTION L: Provisional Diagnosis -->
+  <section class="card" data-section="L">
+    <header><h2>Section L &mdash; Provisional Diagnosis</h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="field"><label>Provisional diagnosis</label><textarea name="L.diagnosis"></textarea></div>
+      <div class="row">
+        <div class="field"><label>Clinician signature</label><input type="text" name="L.signature" placeholder="Name &amp; designation"/></div>
+        <div class="field"><label>Date</label><input type="date" name="L.date" /></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="submit-bar">
+    <span class="status" id="statusMsg">Patient name is required &middot; the case sheet will download as <code>&lt;name&gt;_&lt;timestamp&gt;.json</code></span>
+    <div>
+      <button type="button" class="btn" id="downloadBtn">Download Case Sheet (JSON)</button>
+    </div>
+  </div>
+</form>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
