@@ -526,6 +526,7 @@ function buildPayload(form) {
   const sectionL = raw.L || {};
   const formul = raw.FORM || {};
   const mrs = raw.MRS || {};
+  const pilot = raw.PILOT || {};
 
   // Restructure the per-layer items into a tidy array
   const layers = LAYERS.map(layer => {
@@ -610,6 +611,14 @@ function buildPayload(form) {
       }
     },
     sectionI: sectionI,
+    pilotMetrics: {
+      averageTimeToCompleteMinutes: pilot.avgTimeMinutes ? Number(pilot.avgTimeMinutes) : null,
+      usefulnessRating: pilot.usefulnessRating ? Number(pilot.usefulnessRating) : null,
+      treatmentPlanChanged: pilot.treatmentPlanChanged || '',
+      clinicianSatisfaction: pilot.clinicianSatisfaction ? Number(pilot.clinicianSatisfaction) : null,
+      scoreConsistency: pilot.scoreConsistency ? Number(pilot.scoreConsistency) : null,
+      notes: pilot.notes || ''
+    },
     sectionL: {
       provisionalDiagnosis: sectionL.diagnosis || '',
       signature: sectionL.signature || '',
@@ -619,10 +628,73 @@ function buildPayload(form) {
 }
 
 // ---------------------------------------------------------------------------
+// Floating timer
+// ---------------------------------------------------------------------------
+
+const Timer = {
+  elapsedMs: 0,
+  startedAt: null,
+  tickHandle: null,
+  format(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = String(Math.floor(total / 3600)).padStart(2, '0');
+    const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+    const s = String(total % 60).padStart(2, '0');
+    return `${h}:${m}:${s}`;
+  },
+  currentMs() {
+    return this.elapsedMs + (this.startedAt ? Date.now() - this.startedAt : 0);
+  },
+  render() {
+    const wrap = document.getElementById('floatingTimer');
+    document.getElementById('timerDisplay').textContent = this.format(this.currentMs());
+    document.getElementById('timerStartBtn').disabled = !!this.startedAt;
+    document.getElementById('timerPauseBtn').disabled = !this.startedAt;
+    const running = !!this.startedAt;
+    const paused = !running && this.elapsedMs > 0;
+    wrap.classList.toggle('running', running);
+    wrap.classList.toggle('paused', paused);
+    const badge = document.getElementById('timerStatusBadge');
+    if (badge) badge.textContent = running ? 'Running' : (paused ? 'Paused' : 'Idle');
+  },
+  start() {
+    if (this.startedAt) return;
+    this.startedAt = Date.now();
+    this.tickHandle = setInterval(() => this.render(), 1000);
+    this.render();
+  },
+  pause() {
+    if (!this.startedAt) return;
+    this.elapsedMs += Date.now() - this.startedAt;
+    this.startedAt = null;
+    clearInterval(this.tickHandle);
+    this.tickHandle = null;
+    this.render();
+  },
+  reset() {
+    this.elapsedMs = 0;
+    this.startedAt = null;
+    clearInterval(this.tickHandle);
+    this.tickHandle = null;
+    this.render();
+  },
+  stopAndGet() {
+    if (this.startedAt) this.pause();
+    return { ms: this.elapsedMs, formatted: this.format(this.elapsedMs) };
+  }
+};
+
+// ---------------------------------------------------------------------------
 // Boot
 // ---------------------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Timer wiring
+  document.getElementById('timerStartBtn').addEventListener('click', () => Timer.start());
+  document.getElementById('timerPauseBtn').addEventListener('click', () => Timer.pause());
+  document.getElementById('timerResetBtn').addEventListener('click', () => Timer.reset());
+  Timer.render();
+
   const layersContainer = document.getElementById('layersContainer');
   LAYERS.forEach(l => layersContainer.appendChild(buildLayerCard(l)));
   buildResistanceGrid();
@@ -673,6 +745,11 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Patient name is required.', true);
       return;
     }
+    const elapsed = Timer.stopAndGet();
+    payload.pilotMetrics.totalTimeToComplete = {
+      seconds: Math.floor(elapsed.ms / 1000),
+      formatted: elapsed.formatted
+    };
     const name = (payload.sectionA.fullName || 'patient').trim().toLowerCase()
                   .replace(/\s+/g, '_').replace(/[^a-z0-9_-]/g, '') || 'patient';
     const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);

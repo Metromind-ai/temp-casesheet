@@ -356,13 +356,31 @@ main {
   background: #ffffffea;
   backdrop-filter: blur(6px);
   border-top: 1px solid var(--line);
-  padding: 14px 20px;
+  padding: 8px 14px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
   margin: 24px -20px -80px;
 }
 .submit-bar .status { font-size: 13px; color: var(--ink-soft); }
+.info-btn {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 700;
+  font-style: italic;
+  font-family: Georgia, serif;
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.info-btn:hover { background: var(--accent); color: #fff; }
 .btn {
   background: var(--accent);
   color: #fff;
@@ -394,3 +412,128 @@ main {
 }
 .toast.show { opacity: 1; transform: translateY(0); }
 .toast.error { background: #c0392b; }
+
+/* ---- Inline timer (lives inside .submit-bar) ---- */
+.floating-timer {
+  flex: 1 1 auto;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 10px;
+  background: linear-gradient(180deg, #ffffff 0%, var(--accent-soft) 100%);
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  min-width: 0;
+}
+.floating-timer .timer-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.floating-timer .timer-icon { color: var(--accent); font-size: 14px; }
+.floating-timer .timer-label {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.floating-timer .timer-status {
+  background: var(--line);
+  color: var(--ink-soft);
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+.floating-timer.running .timer-status { background: #d6f0d8; color: var(--good); }
+.floating-timer.paused  .timer-status { background: #fcecc4; color: #8a5a00; }
+.floating-timer .timer-display {
+  margin-left: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.floating-timer.running .timer-display {
+  color: var(--good);
+  animation: timerPulse 1.6s ease-in-out infinite;
+}
+.floating-timer.paused .timer-display { color: #8a5a00; }
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+.floating-timer .timer-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: stretch;
+}
+.floating-timer .timer-buttons .btn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+/* Generic button modifiers (reused across the app) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  line-height: 1;
+  transition: background 0.15s ease, opacity 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-sm {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+.btn-success {
+  background: var(--good);
+  color: #fff;
+}
+.btn-success:hover:not(:disabled) { background: #266a29; }
+.btn-warn {
+  background: #c98410;
+  color: #fff;
+}
+.btn-warn:hover:not(:disabled) { background: #a86d0c; }
+.btn-ghost {
+  background: #fff;
+  color: var(--accent-ink);
+  border-color: var(--line-strong);
+}
+.btn-ghost:hover:not(:disabled) { background: var(--accent-soft); }
+.btn .btn-icon { font-size: 11px; line-height: 1; }
+.btn .btn-label { line-height: 1; }
+@media (max-width: 380px) {
+  .floating-timer .timer-buttons .btn .btn-label { display: none; }
+  .floating-timer .timer-buttons .btn .btn-icon { font-size: 13px; }
+}
+
+/* Compact download button in the bar */
+.submit-bar .btn {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.submit-bar .btn .btn-icon { font-size: 14px; }
+
+@media (max-width: 600px) {
+  .submit-bar { padding: 8px 10px; gap: 8px; flex-wrap: wrap; }
+  .floating-timer { flex: 1 1 100%; order: 2; }
+  .info-btn { order: 1; }
+  #downloadBtn { order: 3; flex: 1 1 100%; justify-content: center; }
+  #downloadBtn .btn-label::after { content: " case sheet"; }
+  .floating-timer .timer-buttons .btn .btn-label { display: none; }
+  .floating-timer .timer-buttons .btn .btn-icon { font-size: 14px; }
+}

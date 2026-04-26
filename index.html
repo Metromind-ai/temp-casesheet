@@ -261,6 +261,67 @@
     </div>
   </section>
 
+  <!-- PILOT METRICS -->
+  <section class="card" data-section="PILOT">
+    <header><h2>Pilot Metrics</h2><span class="toggle-icon">▾</span></header>
+    <div class="body">
+      <div class="row">
+        <div class="field">
+          <label>Average time to complete (minutes)</label>
+          <input type="number" name="PILOT.avgTimeMinutes" min="0" step="1" placeholder="e.g., 25" />
+        </div>
+        <div class="field">
+          <label>Usefulness rating (1 = not useful, 5 = very useful)</label>
+          <select name="PILOT.usefulnessRating">
+            <option value="">--</option>
+            <option value="1">1 — Not useful</option>
+            <option value="2">2 — Slightly useful</option>
+            <option value="3">3 — Moderately useful</option>
+            <option value="4">4 — Useful</option>
+            <option value="5">5 — Very useful</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Did the assessment change the treatment plan?</label>
+          <select name="PILOT.treatmentPlanChanged">
+            <option value="">--</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+            <option value="Partially">Partially</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Clinician satisfaction (1 = low, 5 = high)</label>
+          <select name="PILOT.clinicianSatisfaction">
+            <option value="">--</option>
+            <option value="1">1 — Low</option>
+            <option value="2">2</option>
+            <option value="3">3 — Neutral</option>
+            <option value="4">4</option>
+            <option value="5">5 — High</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Score consistency (1 = inconsistent, 5 = highly consistent)</label>
+        <select name="PILOT.scoreConsistency">
+          <option value="">--</option>
+          <option value="1">1 — Inconsistent</option>
+          <option value="2">2</option>
+          <option value="3">3 — Moderate</option>
+          <option value="4">4</option>
+          <option value="5">5 — Highly consistent</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Notes / comments on the pilot</label>
+        <textarea name="PILOT.notes"></textarea>
+      </div>
+    </div>
+  </section>
+
   <!-- SECTION L: Provisional Diagnosis -->
   <section class="card" data-section="L">
     <header><h2>Section L &mdash; Provisional Diagnosis</h2><span class="toggle-icon">▾</span></header>
@@ -274,10 +335,37 @@
   </section>
 
   <div class="submit-bar">
-    <span class="status" id="statusMsg">Patient name is required &middot; the case sheet will download as <code>&lt;name&gt;_&lt;timestamp&gt;.json</code></span>
-    <div>
-      <button type="button" class="btn" id="downloadBtn">Download Case Sheet (JSON)</button>
+    <button type="button" class="info-btn" id="infoBtn"
+            aria-label="Help"
+            title="Patient name is required. The case sheet will download as <name>_<timestamp>.json. Use the timer to record actual time taken.">i</button>
+
+    <div id="floatingTimer" class="floating-timer" aria-label="Case sheet timer">
+      <div class="timer-head">
+        <span class="timer-icon" aria-hidden="true">&#9201;</span>
+        <span class="timer-label">Time</span>
+        <span class="timer-status" id="timerStatusBadge">Idle</span>
+        <span class="timer-display" id="timerDisplay">00:00:00</span>
+      </div>
+      <div class="timer-buttons">
+        <button type="button" id="timerStartBtn" class="btn btn-sm btn-success">
+          <span class="btn-icon" aria-hidden="true">&#9654;</span>
+          <span class="btn-label">Start</span>
+        </button>
+        <button type="button" id="timerPauseBtn" class="btn btn-sm btn-warn" disabled>
+          <span class="btn-icon" aria-hidden="true">&#10074;&#10074;</span>
+          <span class="btn-label">Pause</span>
+        </button>
+        <button type="button" id="timerResetBtn" class="btn btn-sm btn-ghost">
+          <span class="btn-icon" aria-hidden="true">&#8634;</span>
+          <span class="btn-label">Reset</span>
+        </button>
+      </div>
     </div>
+
+    <button type="button" class="btn" id="downloadBtn">
+      <span class="btn-icon" aria-hidden="true">&#x2B07;</span>
+      <span class="btn-label">Download</span>
+    </button>
   </div>
 </form>
 </main>
