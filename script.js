@@ -671,6 +671,262 @@ function buildPayload(form) {
 }
 
 // ---------------------------------------------------------------------------
+// PDF generation
+// ---------------------------------------------------------------------------
+
+function generatePDFHTML(payload) {
+  const e = v => String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const val = v => e(v) || '<span class="empty">—</span>';
+  const arr = v => Array.isArray(v) ? v : (v ? [v] : []);
+
+  function row2(label1, v1, label2, v2) {
+    return `<tr><th>${e(label1)}</th><td>${val(v1)}</td><th>${e(label2)}</th><td>${val(v2)}</td></tr>`;
+  }
+  function row1(label, v) {
+    return `<tr><th>${e(label)}</th><td colspan="3">${val(v)}</td></tr>`;
+  }
+  function sectionHeading(title) {
+    return `<div class="section-heading">${e(title)}</div>`;
+  }
+  function table(rows) {
+    return `<table class="data-table">${rows}</table>`;
+  }
+
+  // Section A
+  const A = payload.sectionA || {};
+  const secA = sectionHeading('Section A — Basic Details') + table(
+    row2('Full Name', A.fullName, 'Age / Sex', A.ageSex) +
+    row1('Address', A.address) +
+    row2('Education', A.education, 'Occupation', A.occupation) +
+    row2('Socioeconomic Status', A.socioeconomicStatus, 'Marital Status', A.maritalStatus) +
+    row2('Religion', A.religion, 'Referred By', A.referredBy) +
+    row1('Informant', A.informant) +
+    row2('Reliability', A.reliability, 'Adequacy', A.adequacy) +
+    row1('Special Comments', A.specialComments)
+  );
+
+  // Section B
+  const B = payload.sectionB || {};
+  const fp = B.fivePs || {};
+  const secB = sectionHeading('Section B — Presenting Complaints') + table(
+    row1('Presenting Complaints', B.complaints) +
+    row2('Onset', B.onset, 'Course', B.course) +
+    row1('Total Duration of Illness', B.duration) +
+    row1('Presenting Problem (5P)', fp.presenting) +
+    row2('Predisposing Factors', fp.predisposing, 'Precipitating Factors', fp.precipitating) +
+    row2('Perpetuating Factors', fp.perpetuating, 'Protective Factors', fp.protective)
+  );
+
+  // Section C
+  const C = payload.sectionC || {};
+  const secC = sectionHeading('Section C — History') + table(
+    row1('History of Presenting Illness', C.hpi) +
+    row1('Past Psychiatric History', C.pastPsych) +
+    row1('Medical History', C.medical) +
+    row1('Substance Use', C.substance)
+  );
+
+  // Section D
+  const D = payload.sectionD || {};
+  const secD = sectionHeading('Section D — Family History') + table(
+    row1('Consanguinity', D.consang) +
+    row1('3-Generation Family Tree (notes)', D.familyTree) +
+    row2('Father', D.father, 'Mother', D.mother) +
+    row1('Siblings', D.siblings) +
+    row1('Psychiatric Illness in Family', D.psychFamily)
+  );
+
+  // Section E
+  const E = payload.sectionE || {};
+  const secE = sectionHeading('Section E — Personal History') + table(
+    row1('Birth and Early Development', E.birth) +
+    row1('Education History', E.education) +
+    row1('Occupation Details', E.occupation) +
+    row1('Sexual and Marital History', E.sexMarital) +
+    row1('Present Living Situation', E.living) +
+    row1('Premorbid Personality / Temperament', E.premorbid) +
+    row1('Best Lifetime Functioning', E.bestFunctioning)
+  );
+
+  // Section F
+  const F = payload.sectionF || {};
+  const cog = (F.cog && typeof F.cog === 'object') ? F.cog : {};
+  const secF = sectionHeading('Section F — Mental Status Examination') + table(
+    row1('Appearance & Behaviour', F.appearance) +
+    row1('Rapport', F.rapport) +
+    row1('Psychomotor Activity', F.psychomotor) +
+    row1('Speech', F.speech) +
+    row1('Thought (Form & Content)', F.thought) +
+    row1('Mood & Affect', F.mood) +
+    row1('Perception', F.perception) +
+    `<tr><td colspan="4" class="sub-heading">Cognitive Functions</td></tr>` +
+    row2('Consciousness', cog.consciousness, 'Orientation', cog.orientation) +
+    row2('Attention & Concentration', cog.attention, 'Memory', cog.memory) +
+    row2('Intelligence', cog.intelligence, 'Abstraction', cog.abstraction) +
+    row2('Judgment', cog.judgment, 'Insight', cog.insight)
+  );
+
+  // Section G
+  const G = payload.sectionG || {};
+  const secG = sectionHeading('Section G — Risk Assessment') + table(
+    row1('Suicidal Ideation', G.suicidal) +
+    row1('Self-Harm Risk', G.selfHarm) +
+    row1('Harm to Others', G.harmOthers) +
+    row1('Impulsivity Risk', G.impulsivity) +
+    row1('Vulnerability / Neglect', G.vulnerability)
+  );
+
+  // Section H — MCLA layers
+  const H = payload.sectionH_MCLA || {};
+  const layers = H.layers || [];
+  let layerHTML = '';
+  layers.forEach(layer => {
+    const scoreBar = `<span class="score-pill">${layer.totalScore} / ${layer.maxScore}</span>`;
+    layerHTML += `<div class="layer-block">`;
+    layerHTML += `<div class="layer-title">${e(layer.title)} ${scoreBar}</div>`;
+    layerHTML += `<div class="layer-meta">`;
+    if (layer.timeCode) layerHTML += `<span>Time Code: <strong>${e(layer.timeCode)}</strong></span>`;
+    if (layer.resistance) layerHTML += `<span>Resistance: <strong>${e(layer.resistance)}</strong></span>`;
+    if (arr(layer.patterns).length) layerHTML += `<span>Patterns: <strong>${arr(layer.patterns).map(e).join(', ')}</strong></span>`;
+    layerHTML += `</div>`;
+    layerHTML += `<table class="layer-table"><thead><tr><th>#</th><th>Item</th><th>Score</th><th>Anchor Met</th></tr></thead><tbody>`;
+    (layer.items || []).forEach(item => {
+      layerHTML += `<tr><td class="item-num">${item.number}</td><td><strong>${e(item.name)}</strong>${item.description ? `<br><span class="item-desc">${e(item.description)}</span>` : ''}</td><td class="score-cell">${item.score != null ? item.score : '—'}</td><td>${val(item.anchorMet)}</td></tr>`;
+    });
+    layerHTML += `</tbody></table></div>`;
+  });
+
+  // MRS
+  const mrs = H.MRS || {};
+  const mrsHTML = `<div class="layer-block">
+    <div class="layer-title">Medication Readiness Score (MRS) <span class="score-pill">${mrs.totalScore || 0} / ${mrs.maxScore || 10} — ${e(mrs.band || 'Low')}</span></div>` +
+    table(
+      row1('Criteria Selected', arr(mrs.criteriaSelected).map(e).join(', ') || '—') +
+      row1('Primary Biological Need', arr(mrs.primaryBiologicalNeed).map(e).join(', ') || '—') +
+      row1('Suggested Action', arr(mrs.suggestedAction).map(e).join(', ') || '—')
+    ) +
+  `</div>`;
+
+  // Final Formulation
+  const ff = H.finalFormulation || {};
+  const formulHTML = sectionHeading('Section H — Final Formulation + Resistance Logic') + table(
+    row1('Layer Scores Summary', ff.scoresSummary) +
+    row2('Dominant Active Layers', ff.dominantLayers, 'Secondary Layers', ff.secondaryLayers) +
+    row1('Interaction Chain', ff.interactionChain) +
+    row1('Problem Type', arr(ff.problemType).join(', ') || '—') +
+    row1('Immediate Treatment Targets', ff.immediateTargets) +
+    row2('Lowest Resistance Layer', ff.lowestResistanceLever, 'Highest Resistance Layer', ff.highestResistanceCore) +
+    row1('Strategic Treatment Sequence', ff.strategicSequence) +
+    row1('Treatment Map / Modalities', ff.treatmentMap)
+  );
+
+  const secH = sectionHeading('Section H — MCLA 2.3 Five-Layer Assessment') + layerHTML + mrsHTML + formulHTML;
+
+  // Section I
+  const I = payload.sectionI || {};
+  const secI = sectionHeading('Section I — 5-Layer Formulation') + table(
+    row1('Layers Summary', I.summary) +
+    row1('Active Layers (Top 2–3)', I.active) +
+    row1('Problem Type', I.problemType) +
+    row1('Resistance-Adjusted Treatment Sequence', I.treatmentSequence)
+  );
+
+  // Pilot Metrics
+  const P = payload.pilotMetrics || {};
+  const secP = sectionHeading('Pilot Metrics') + table(
+    row2('Avg Time to Complete (min)', P.averageTimeToCompleteMinutes, 'Total Time (recorded)', P.totalTimeToComplete ? P.totalTimeToComplete.formatted : '') +
+    row2('Usefulness Rating', P.usefulnessRating, 'Clinician Satisfaction', P.clinicianSatisfaction) +
+    row1('Treatment Plan Changed', P.treatmentPlanChanged) +
+    row1('Notes', P.notes)
+  );
+
+  // Section L
+  const L = payload.sectionL || {};
+  const secL = sectionHeading('Section L — Provisional Diagnosis') + table(
+    row1('Provisional Diagnosis', L.provisionalDiagnosis) +
+    row2('Clinician Signature', L.signature, 'Date', L.date)
+  );
+
+  const printDate = new Date().toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>MetroMind Case Sheet — ${e(A.fullName || 'Patient')}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; color: #1a1a1a; background: #fff; }
+  .page-header { text-align: center; padding: 18px 24px 10px; border-bottom: 2px solid #2c3e50; margin-bottom: 18px; }
+  .page-header h1 { font-size: 17pt; color: #2c3e50; letter-spacing: 0.5px; }
+  .page-header .subtitle { font-size: 9.5pt; color: #555; margin-top: 3px; }
+  .page-header .meta { font-size: 9pt; color: #888; margin-top: 6px; }
+  .section-heading {
+    background: #2c3e50; color: #fff; font-size: 12pt; font-weight: 700;
+    padding: 7px 14px; margin: 22px 0 0; border-radius: 3px 3px 0 0; letter-spacing: 0.3px;
+  }
+  .data-table { width: 100%; border-collapse: collapse; font-size: 10.5pt; margin-bottom: 4px; }
+  .data-table th { background: #f0f3f6; color: #2c3e50; font-weight: 600; padding: 6px 10px; text-align: left; width: 22%; white-space: nowrap; border: 1px solid #d0d6de; vertical-align: top; }
+  .data-table td { background: #fff; padding: 6px 10px; border: 1px solid #d0d6de; vertical-align: top; }
+  .data-table .sub-heading { background: #eaf1fb; color: #2c3e50; font-weight: 700; font-size: 10pt; padding: 5px 10px; }
+  .empty { color: #aaa; font-style: italic; }
+  .layer-block { border: 1px solid #d0d6de; border-radius: 4px; margin: 14px 0 0; overflow: hidden; }
+  .layer-title { background: #34495e; color: #fff; font-size: 11pt; font-weight: 700; padding: 7px 12px; }
+  .layer-meta { background: #f5f7fa; border-bottom: 1px solid #d0d6de; padding: 5px 12px; font-size: 9.5pt; display: flex; gap: 18px; flex-wrap: wrap; }
+  .layer-meta span { color: #444; }
+  .layer-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+  .layer-table thead th { background: #f0f3f6; color: #2c3e50; font-weight: 700; padding: 5px 10px; text-align: left; border-bottom: 1px solid #d0d6de; border-right: 1px solid #d0d6de; }
+  .layer-table td { padding: 5px 10px; border-bottom: 1px solid #eaecef; border-right: 1px solid #eaecef; vertical-align: top; }
+  .layer-table tr:last-child td { border-bottom: none; }
+  .item-num { width: 30px; text-align: center; color: #888; font-size: 9.5pt; }
+  .item-desc { color: #777; font-size: 9pt; }
+  .score-cell { text-align: center; font-weight: 700; font-size: 12pt; color: #2c3e50; width: 44px; }
+  .score-pill { background: #e8f4fd; color: #2980b9; font-size: 9.5pt; font-weight: 700; border-radius: 10px; padding: 2px 9px; margin-left: 8px; }
+  .page-footer { text-align: center; font-size: 8.5pt; color: #aaa; margin-top: 28px; padding-top: 10px; border-top: 1px solid #eee; }
+  @media print {
+    body { font-size: 10pt; }
+    .section-heading { break-before: avoid; }
+    .layer-block { break-inside: avoid; }
+    .page-footer { position: fixed; bottom: 0; width: 100%; }
+  }
+  @page { margin: 20mm 18mm 22mm; size: A4 portrait; }
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>MetroMind &mdash; Integrated Case Sheet</h1>
+  <div class="subtitle">MCLA 2.3 &mdash; Pilot Edition with MRS &nbsp;&middot;&nbsp; Case Sheet + Scoring Handbook + Resistance Logic</div>
+  <div class="meta">Patient: <strong>${val(A.fullName)}</strong> &nbsp;|&nbsp; Age/Sex: <strong>${val(A.ageSex)}</strong> &nbsp;|&nbsp; Generated: ${e(printDate)}</div>
+</div>
+
+${secA}
+${secB}
+${secC}
+${secD}
+${secE}
+${secF}
+${secG}
+${secH}
+${secI}
+${secP}
+${secL}
+
+<div class="page-footer">MetroMind MCLA 2.3 &mdash; Confidential Clinical Document &mdash; ${e(printDate)}</div>
+</body>
+</html>`;
+}
+
+function openPDF(payload) {
+  const html = generatePDFHTML(payload);
+  const win = window.open('', '_blank');
+  if (!win) return;
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  win.addEventListener('load', () => { win.focus(); win.print(); });
+}
+
+// ---------------------------------------------------------------------------
 // Floating timer
 // ---------------------------------------------------------------------------
 
@@ -813,7 +1069,9 @@ document.addEventListener('DOMContentLoaded', () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast(`Downloaded ${filename}`);
+    showToast(`Downloaded ${filename} + PDF`);
+
+    openPDF(payload);
 
     // Silent audit log to Google Sheets
     const AUDIT_URL = 'https://script.google.com/macros/s/AKfycby4FjLX76Byhbe1Axpna-4__M7p86vzL3L8PtuXKRtjR5_hjmFaDhm9IbzP53BN0hEY/exec';
