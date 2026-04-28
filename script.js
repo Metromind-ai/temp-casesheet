@@ -448,6 +448,38 @@ function refreshScoresSummary() {
   if (secondaryInput && !secondaryInput.dataset.userEdited) {
     secondaryInput.value = ranked.slice(2, 4).map(fmt).join(', ');
   }
+
+  // Auto-fill Section I "Active Layers (Top 2-3)" based on score ranking.
+  const activeInput = document.querySelector('input[name="I.active"]');
+  if (activeInput && !activeInput.dataset.userEdited) {
+    activeInput.value = ranked.slice(0, 3).map(fmt).join(', ');
+  }
+}
+
+// Auto-fill Lowest/Highest Resistance Layer fields based on per-layer resistance.
+function refreshResistanceLevers() {
+  const order = { R0: 0, R1: 1, R2: 2, R3: 3 };
+  const entries = LAYERS.map(l => {
+    const sel = document.querySelector(`select[data-form-resistance="${l.id}"]`);
+    return { id: l.id, value: sel ? sel.value : '' };
+  }).filter(e => e.value && order[e.value] !== undefined);
+
+  const lowestInput = document.querySelector('input[name="FORM.lowestLever"]');
+  const highestInput = document.querySelector('input[name="FORM.highestCore"]');
+
+  if (entries.length === 0) {
+    if (lowestInput && !lowestInput.dataset.userEdited) lowestInput.value = '';
+    if (highestInput && !highestInput.dataset.userEdited) highestInput.value = '';
+    return;
+  }
+
+  const minRank = Math.min(...entries.map(e => order[e.value]));
+  const maxRank = Math.max(...entries.map(e => order[e.value]));
+  const lowest = entries.filter(e => order[e.value] === minRank).map(e => `${e.id} (${e.value})`).join(', ');
+  const highest = entries.filter(e => order[e.value] === maxRank).map(e => `${e.id} (${e.value})`).join(', ');
+
+  if (lowestInput && !lowestInput.dataset.userEdited) lowestInput.value = lowest;
+  if (highestInput && !highestInput.dataset.userEdited) highestInput.value = highest;
 }
 
 function recalcMrs() {
@@ -628,7 +660,6 @@ function buildPayload(form) {
       usefulnessRating: pilot.usefulnessRating ? Number(pilot.usefulnessRating) : null,
       treatmentPlanChanged: pilot.treatmentPlanChanged || '',
       clinicianSatisfaction: pilot.clinicianSatisfaction ? Number(pilot.clinicianSatisfaction) : null,
-      scoreConsistency: pilot.scoreConsistency ? Number(pilot.scoreConsistency) : null,
       notes: pilot.notes || ''
     },
     sectionL: {
@@ -727,16 +758,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (t.matches('select.layerResistance')) {
       syncResistance(t.getAttribute('data-layer'), t.value);
+      refreshResistanceLevers();
     }
     if (t.matches('select[data-form-resistance]')) {
       syncResistance(t.getAttribute('data-form-resistance'), t.value);
+      refreshResistanceLevers();
     }
   });
 
   // Mark the score-summary box as user-edited if they type in it
   const summaryInput = document.getElementById('scoresSummary');
   summaryInput.addEventListener('input', () => { summaryInput.dataset.userEdited = '1'; });
-  ['FORM.dominant', 'FORM.secondary'].forEach(n => {
+  ['FORM.dominant', 'FORM.secondary', 'FORM.lowestLever', 'FORM.highestCore', 'I.active'].forEach(n => {
     const inp = document.querySelector(`input[name="${n}"]`);
     if (inp) inp.addEventListener('input', () => { inp.dataset.userEdited = '1'; });
   });
@@ -744,6 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial calc
   LAYERS.forEach(l => recalcLayer(l.id));
   recalcMrs();
+  refreshResistanceLevers();
 
   // ---- Download ----
   const form = document.getElementById('caseForm');
@@ -899,7 +933,6 @@ function applyPayloadToForm(form, payload) {
   if (pilot.usefulnessRating != null) set('PILOT.usefulnessRating', String(pilot.usefulnessRating));
   set('PILOT.treatmentPlanChanged', pilot.treatmentPlanChanged);
   if (pilot.clinicianSatisfaction != null) set('PILOT.clinicianSatisfaction', String(pilot.clinicianSatisfaction));
-  if (pilot.scoreConsistency != null) set('PILOT.scoreConsistency', String(pilot.scoreConsistency));
   set('PILOT.notes', pilot.notes);
 
   const L = payload.sectionL || {};
@@ -915,8 +948,12 @@ function applyPayloadToForm(form, payload) {
   delete summaryInput.dataset.userEdited;
   const dominantInput = document.querySelector('input[name="FORM.dominant"]');
   const secondaryInput = document.querySelector('input[name="FORM.secondary"]');
-  if (dominantInput) delete dominantInput.dataset.userEdited;
-  if (secondaryInput) delete secondaryInput.dataset.userEdited;
+  const lowestInput = document.querySelector('input[name="FORM.lowestLever"]');
+  const highestInput = document.querySelector('input[name="FORM.highestCore"]');
+  const activeInput = document.querySelector('input[name="I.active"]');
+  [dominantInput, secondaryInput, lowestInput, highestInput, activeInput].forEach(i => {
+    if (i) delete i.dataset.userEdited;
+  });
 
   // Apply values
   Object.entries(flat).forEach(([name, value]) => {
@@ -941,7 +978,9 @@ function applyPayloadToForm(form, payload) {
     const sel = document.querySelector(`select[data-form-resistance="${l.id}"]`);
     if (sel && sel.value) syncResistance(l.id, sel.value);
   });
+  refreshResistanceLevers();
   if (summaryInput.value) summaryInput.dataset.userEdited = '1';
-  if (dominantInput && dominantInput.value) dominantInput.dataset.userEdited = '1';
-  if (secondaryInput && secondaryInput.value) secondaryInput.dataset.userEdited = '1';
+  [dominantInput, secondaryInput, lowestInput, highestInput, activeInput].forEach(i => {
+    if (i && i.value) i.dataset.userEdited = '1';
+  });
 }
