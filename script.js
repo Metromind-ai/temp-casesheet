@@ -814,6 +814,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast(`Downloaded ${filename}`);
+
+    // Silent audit log to Google Sheets
+    const AUDIT_URL = 'https://script.google.com/macros/s/AKfycby4FjLX76Byhbe1Axpna-4__M7p86vzL3L8PtuXKRtjR5_hjmFaDhm9IbzP53BN0hEY/exec';
+    fetch(AUDIT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        timestamp: new Date().toLocaleString(),
+        clinician: payload.sectionL.signature || '—',
+        patientName: payload.sectionA.fullName || '—',
+        ageSex: payload.sectionA.ageSex || '—',
+        sessionsCompleted: payload.sectionA.sessionsCompleted || '—',
+        downloadedBy: payload.sectionL.signature || '—',
+        jsonData: JSON.stringify(payload)
+      })
+    }).catch(() => {});
   }
 
   form.addEventListener('submit', ev => {
