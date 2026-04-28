@@ -427,14 +427,26 @@ function recalcLayer(layerId) {
 }
 
 function refreshScoresSummary() {
-  const parts = LAYERS.map(l => {
-    const v = document.getElementById(`${l.id}_scoreHidden`).value || '0';
-    return `${l.id} ${v}/21`;
-  });
+  const scored = LAYERS.map(l => ({
+    id: l.id,
+    score: Number(document.getElementById(`${l.id}_scoreHidden`).value || 0)
+  }));
+  const parts = scored.map(s => `${s.id} ${s.score}/21`);
   const summaryInput = document.getElementById('scoresSummary');
-  // Only auto-fill if user hasn't typed their own version
   if (!summaryInput.dataset.userEdited) {
     summaryInput.value = parts.join(' / ');
+  }
+
+  // Rank layers by score (desc); preserve L1..L5 order on ties.
+  const ranked = scored.slice().sort((a, b) => b.score - a.score);
+  const fmt = s => `${s.id} (${s.score}/21)`;
+  const dominantInput = document.querySelector('input[name="FORM.dominant"]');
+  const secondaryInput = document.querySelector('input[name="FORM.secondary"]');
+  if (dominantInput && !dominantInput.dataset.userEdited) {
+    dominantInput.value = ranked.slice(0, 2).map(fmt).join(', ');
+  }
+  if (secondaryInput && !secondaryInput.dataset.userEdited) {
+    secondaryInput.value = ranked.slice(2, 4).map(fmt).join(', ');
   }
 }
 
@@ -724,6 +736,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Mark the score-summary box as user-edited if they type in it
   const summaryInput = document.getElementById('scoresSummary');
   summaryInput.addEventListener('input', () => { summaryInput.dataset.userEdited = '1'; });
+  ['FORM.dominant', 'FORM.secondary'].forEach(n => {
+    const inp = document.querySelector(`input[name="${n}"]`);
+    if (inp) inp.addEventListener('input', () => { inp.dataset.userEdited = '1'; });
+  });
 
   // Initial calc
   LAYERS.forEach(l => recalcLayer(l.id));
@@ -897,6 +913,10 @@ function applyPayloadToForm(form, payload) {
   form.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; });
   const summaryInput = document.getElementById('scoresSummary');
   delete summaryInput.dataset.userEdited;
+  const dominantInput = document.querySelector('input[name="FORM.dominant"]');
+  const secondaryInput = document.querySelector('input[name="FORM.secondary"]');
+  if (dominantInput) delete dominantInput.dataset.userEdited;
+  if (secondaryInput) delete secondaryInput.dataset.userEdited;
 
   // Apply values
   Object.entries(flat).forEach(([name, value]) => {
@@ -922,4 +942,6 @@ function applyPayloadToForm(form, payload) {
     if (sel && sel.value) syncResistance(l.id, sel.value);
   });
   if (summaryInput.value) summaryInput.dataset.userEdited = '1';
+  if (dominantInput && dominantInput.value) dominantInput.dataset.userEdited = '1';
+  if (secondaryInput && secondaryInput.value) secondaryInput.dataset.userEdited = '1';
 }
