@@ -772,4 +772,154 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('downloadBtn').addEventListener('click', downloadCaseSheet);
+
+  // ---- Load JSON ----
+  const loadBtn = document.getElementById('loadBtn');
+  const loadFileInput = document.getElementById('loadFileInput');
+  loadBtn.addEventListener('click', () => loadFileInput.click());
+  loadFileInput.addEventListener('change', () => {
+    const file = loadFileInput.files && loadFileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const payload = JSON.parse(reader.result);
+        applyPayloadToForm(form, payload);
+        showToast(`Loaded ${file.name}`);
+      } catch (err) {
+        showToast(`Could not load JSON: ${err.message}`, true);
+      } finally {
+        loadFileInput.value = '';
+      }
+    };
+    reader.onerror = () => {
+      showToast('Failed to read file.', true);
+      loadFileInput.value = '';
+    };
+    reader.readAsText(file);
+  });
 });
+
+// Restore a form from a previously-downloaded payload (see buildPayload).
+function applyPayloadToForm(form, payload) {
+  if (!payload || typeof payload !== 'object') throw new Error('Empty or invalid JSON');
+
+  const flat = {};
+  const set = (name, val) => { if (val != null && val !== '') flat[name] = val; };
+  const flattenInto = (prefix, obj) => {
+    if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return;
+    Object.entries(obj).forEach(([k, v]) => {
+      const path = prefix + '.' + k;
+      if (v && typeof v === 'object' && !Array.isArray(v)) flattenInto(path, v);
+      else if (v != null && v !== '') flat[path] = v;
+    });
+  };
+
+  const A = payload.sectionA || {};
+  set('A.fullName', A.fullName);
+  set('A.ageSex', A.ageSex);
+  set('A.address', A.address);
+  set('A.education', A.education);
+  set('A.occupation', A.occupation);
+  set('A.ses', A.socioeconomicStatus);
+  set('A.marital', A.maritalStatus);
+  set('A.religion', A.religion);
+  set('A.informant', A.informant);
+  set('A.reliability', A.reliability);
+  set('A.adequacy', A.adequacy);
+  set('A.referredBy', A.referredBy);
+  set('A.comments', A.specialComments);
+
+  const B = payload.sectionB || {};
+  set('B.complaints', B.complaints);
+  set('B.onset', B.onset);
+  set('B.course', B.course);
+  set('B.duration', B.duration);
+  flattenInto('B.5p', B.fivePs);
+
+  flattenInto('C', payload.sectionC);
+  flattenInto('D', payload.sectionD);
+  flattenInto('E', payload.sectionE);
+  flattenInto('F', payload.sectionF);
+  flattenInto('G', payload.sectionG);
+  flattenInto('I', payload.sectionI);
+
+  const H = payload.sectionH_MCLA || {};
+  (H.layers || []).forEach(layer => {
+    const id = layer.layerId;
+    if (!id) return;
+    set(`${id}.totalScore`, String(layer.totalScore || 0));
+    set(`${id}.time`, layer.timeCode);
+    set(`${id}.resistance`, layer.resistance);
+    if (Array.isArray(layer.patterns) && layer.patterns.length) flat[`${id}.pattern`] = layer.patterns;
+    if (layer.redFlagAcknowledged) flat[`${id}.redFlagPresent`] = ['yes'];
+    (layer.items || []).forEach(item => {
+      if (item && item.score != null) set(`${id}.item${item.number}.score`, String(item.score));
+    });
+  });
+
+  const mrs = H.MRS || {};
+  if (Array.isArray(mrs.criteriaSelected) && mrs.criteriaSelected.length) flat['MRS.criteria'] = mrs.criteriaSelected;
+  set('MRS.totalScore', mrs.totalScore != null ? String(mrs.totalScore) : null);
+  set('MRS.band', mrs.band);
+  if (Array.isArray(mrs.primaryBiologicalNeed) && mrs.primaryBiologicalNeed.length) flat['MRS.biologicalNeed'] = mrs.primaryBiologicalNeed;
+  if (Array.isArray(mrs.suggestedAction) && mrs.suggestedAction.length) flat['MRS.action'] = mrs.suggestedAction;
+
+  const ff = H.finalFormulation || {};
+  set('FORM.scoresSummary', ff.scoresSummary);
+  set('FORM.dominant', ff.dominantLayers);
+  set('FORM.secondary', ff.secondaryLayers);
+  set('FORM.interactionChain', ff.interactionChain);
+  if (Array.isArray(ff.problemType) && ff.problemType.length) flat['FORM.problemType'] = ff.problemType;
+  set('FORM.targets', ff.immediateTargets);
+  flattenInto('FORM.resistance', ff.resistancePerLayer);
+  set('FORM.lowestLever', ff.lowestResistanceLever);
+  set('FORM.highestCore', ff.highestResistanceCore);
+  set('FORM.strategy', ff.strategicSequence);
+  set('FORM.treatmentMap', ff.treatmentMap);
+
+  const pilot = payload.pilotMetrics || {};
+  if (pilot.averageTimeToCompleteMinutes != null) set('PILOT.avgTimeMinutes', String(pilot.averageTimeToCompleteMinutes));
+  if (pilot.usefulnessRating != null) set('PILOT.usefulnessRating', String(pilot.usefulnessRating));
+  set('PILOT.treatmentPlanChanged', pilot.treatmentPlanChanged);
+  if (pilot.clinicianSatisfaction != null) set('PILOT.clinicianSatisfaction', String(pilot.clinicianSatisfaction));
+  if (pilot.scoreConsistency != null) set('PILOT.scoreConsistency', String(pilot.scoreConsistency));
+  set('PILOT.notes', pilot.notes);
+
+  const L = payload.sectionL || {};
+  set('L.diagnosis', L.provisionalDiagnosis);
+  set('L.signature', L.signature);
+  set('L.date', L.date);
+
+  // Clear current state so the load is a clean overwrite
+  form.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(i => { i.checked = false; });
+  form.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], input[type="hidden"], textarea').forEach(i => { i.value = ''; });
+  form.querySelectorAll('select').forEach(s => { s.selectedIndex = 0; });
+  const summaryInput = document.getElementById('scoresSummary');
+  delete summaryInput.dataset.userEdited;
+
+  // Apply values
+  Object.entries(flat).forEach(([name, value]) => {
+    const fields = form.querySelectorAll(`[name="${CSS.escape(name)}"]`);
+    if (!fields.length) return;
+    fields.forEach(field => {
+      if (field.type === 'checkbox') {
+        const arr = Array.isArray(value) ? value : [value];
+        field.checked = arr.map(String).includes(String(field.value));
+      } else if (field.type === 'radio') {
+        field.checked = (String(field.value) === String(value));
+      } else {
+        field.value = value;
+      }
+    });
+  });
+
+  // Recalculate derived state
+  LAYERS.forEach(l => recalcLayer(l.id));
+  recalcMrs();
+  LAYERS.forEach(l => {
+    const sel = document.querySelector(`select[data-form-resistance="${l.id}"]`);
+    if (sel && sel.value) syncResistance(l.id, sel.value);
+  });
+  if (summaryInput.value) summaryInput.dataset.userEdited = '1';
+}
