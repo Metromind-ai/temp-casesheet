@@ -12,81 +12,81 @@ const LAYERS = [
   {
     id: 'L1',
     title: 'L1 — Biological Signals & Regulation',
-    intro: 'What body-state factors are contributing?',
+    intro: 'How much are brain-body regulation factors contributing to the current presentation?',
     items: [
       {
-        name: 'Family Loading / Genetic Risk',
-        desc: 'mood disorder, psychosis, ADHD, addiction, suicide',
+        name: 'Inherited Vulnerability / Family Loading',
+        desc: 'Do close blood relatives show repeated patterns of depression, bipolar disorder, psychosis, ADHD traits, OCD traits, addiction, suicide attempts, or major emotional instability?',
         anchors: [
-          'No known history',
-          'Distant relative / mild',
-          'One first-degree relative',
-          'Multiple first-degree / severe'
+          'No known significant family loading',
+          'One distant / uncertain relative',
+          'One close relative or several extended relatives',
+          'Multiple close relatives / severe recurring patterns'
         ]
       },
       {
-        name: 'Energy Reliability',
-        desc: 'fatigue, crashes, low stamina despite intent',
+        name: 'Energy, Drive & Reward Capacity',
+        desc: 'Is your body-mind able to generate energy, motivation, and interest naturally — or do you feel slowed, depleted, unable to start, or unable to enjoy reward?',
         anchors: [
-          'Stable energy most days',
-          'Occasional tired days',
-          'Frequent crashes, affects work',
-          'Daily exhaustion, cannot sustain'
+          'Normal energy, motivation, enjoyment',
+          'Mild dips or occasional fatigue',
+          'Frequent low drive / reduced enjoyment / slowed output',
+          'Severe exhaustion, no motivation, marked anhedonia'
         ]
       },
       {
-        name: 'Physiological Reactivity',
-        desc: 'sensitivity to caffeine, hunger, meds, stress, alcohol',
+        name: 'Stress Reactivity & Calm Recovery',
+        desc: 'When stressed, does your body or mind become overactivated (panic, palpitations, irritability, worry loops, obsessive sticking) and struggle to calm down?',
         anchors: [
-          'Normal tolerance',
-          'Mild sensitivity',
-          'Noticeable anxiety/crashes with triggers',
-          'Highly reactive — small triggers destabilize'
+          'Stress response proportionate and settles normally',
+          'Mild overreactivity or delayed calming',
+          'Frequent activation affecting functioning',
+          'Severe panic, relentless rumination, marked dysregulation'
         ]
       },
       {
-        name: 'Motivation State Dependence',
-        desc: 'needs urgency/novelty to activate; routine effort difficult',
+        name: 'Goal-Directed Activation',
+        desc: 'Can you begin and sustain tasks consistently, or do you rely on urgency, novelty, deadlines, pressure, or external force to activate?',
         anchors: [
-          'Can work without urgency',
-          'Sometimes needs deadlines',
-          'Often only activates under urgency',
-          'Cannot function without crisis-pressure'
+          'Starts and sustains tasks normally',
+          'Mild procrastination / occasional pressure dependence',
+          'Frequent initiation difficulty / inconsistent output',
+          'Severe inability to start or sustain unless forced'
         ]
       },
       {
-        name: 'Hormonal / Medical Influence',
-        desc: 'cycle-linked symptoms, thyroid/metabolic, pain/inflammation',
+        name: 'Body-State / Medical Influence',
+        desc: 'Do mood, sleep, focus, libido, anxiety, or energy clearly worsen or improve with hormones, diet, illness, pain, inflammation, substances, medications, weight, thyroid, or metabolism?',
         anchors: [
-          'No clear influence',
-          'Possible mild pattern',
-          'Clear recurring influence',
-          'Dominant driver of symptoms'
+          'No clear body-state relationship',
+          'Mild occasional relationship',
+          'Repeated noticeable relationship',
+          'Strong dominant body-state driver'
         ]
       },
       {
-        name: 'Sleep Restoration',
-        desc: 'non-restorative, fragmented, insomnia, hypersomnia',
+        name: 'Sleep Restoration Quality',
+        desc: 'Even with enough sleep opportunity, do you wake refreshed — or tired, foggy, fragmented, unrested, oversleeping, or mentally dull?',
         anchors: [
-          'Refreshing sleep',
-          'Occasionally poor',
-          'Frequent non-restorative',
-          'Severe insomnia / daily fatigue'
+          'Refreshing restorative sleep',
+          'Mild occasional non-restorative sleep',
+          'Frequent poor restoration / daytime impairment',
+          'Severe insomnia, hypersomnia, or major dysfunction'
         ]
       },
       {
-        name: 'Circadian Timing',
-        desc: 'delayed, reversed, chaotic sleep-wake',
+        name: 'Circadian Alignment & Timing',
+        desc: 'Does your brain-body function best at normal social hours, or mainly at delayed, reversed, drifting, seasonal, or chaotic sleep-wake times?',
         anchors: [
-          'Regular schedule',
-          'Mild delay',
-          'Major shift affecting life',
-          'Reversed / chaotic cycle'
+          'Stable aligned rhythm',
+          'Mild night preference / minor irregularity',
+          'Frequent delayed or inconsistent schedule affecting life',
+          'Severe reversal / chaotic rhythm impairing functioning'
         ]
       }
     ],
-    patterns: ['Circadian', 'Underactivation', 'Hyperreactive', 'Hormonal/medical', 'Mixed'],
-    redFlags: 'total insomnia, severe reversal, suspected apnea, manic decreased sleep, severe weight change'
+    patterns: ['Circadian dominant', 'Underactivation dominant', 'Hyperreactive dominant', 'Hormonal/medical dominant', 'Mixed'],
+    redFlags: 'total insomnia, severe reversal day/night, suspected sleep apnea, manic decreased sleep, severe weight loss/gain'
   },
   {
     id: 'L2',
@@ -113,23 +113,23 @@ const LAYERS = [
   },
   {
     id: 'L3',
-    title: 'L3 — Functional Outputs',
-    intro: 'What is happening in life?',
+    title: 'L3 — Behavioural Maintenance',
+    intro: 'What patterns of behaviour are maintaining distress or reducing life functioning?',
     items: [
-      { name: 'Productivity vs Potential', desc: '',
-        anchors: ['Near expected','Mild underperformance','Significant gap','Severe collapse'] },
-      { name: 'Consistency of Functioning', desc: '',
-        anchors: ['Reliable','Mild variable days','Frequent inconsistency','Chaotic unpredictability'] },
-      { name: 'Completion of Responsibilities', desc: '',
-        anchors: ['Finishes tasks','Some incomplete','Frequent unfinished','Rarely completes'] },
-      { name: 'Self-care / Routine / Finances', desc: '',
-        anchors: ['Managed well','Mild neglect','Bills/self-care slipping','Major neglect / collapse'] },
-      { name: 'Social Functioning', desc: '',
-        anchors: ['Adequate','Mild withdrawal','Significant impairment','Isolated / dysfunctional'] },
-      { name: 'Avoidance Patterns', desc: '',
-        anchors: ['Minimal','Occasional','Frequent, limits life','Pervasive pattern'] },
-      { name: 'Risk Coping', desc: 'substances, compulsions, overspending, aggression, doom scrolling',
-        anchors: ['Healthy coping','Mild risky','Frequent maladaptive','Escalating harmful'] }
+      { name: 'Activation Gap', desc: 'Are you doing far less than your actual potential or intention?',
+        anchors: ['Working near capacity most days','Mild underperformance at times','Often doing far less than capable','Severe paralysis / major wasted potential'] },
+      { name: 'Responsibility Completion', desc: 'How much difficulty are you having completing work, study, home, or daily duties?',
+        anchors: ['Duties completed reliably','Minor delays / forgetfulness','Frequent incomplete tasks / missed obligations','Major collapse of responsibilities'] },
+      { name: 'Avoidance Behaviour', desc: 'How often do you avoid tasks, situations, conversations, or decisions because they feel stressful, effortful, uncertain, or emotionally uncomfortable?',
+        anchors: ['Engages with challenges normally','Occasional avoidance of specific triggers','Regular avoidance pattern affecting functioning','Pervasive avoidance dominating daily life'] },
+      { name: 'Self-Care Structure', desc: 'How disrupted are routines such as sleep timing, meals, hygiene, finances?',
+        anchors: ['Routines intact and consistent','Minor disruptions, self-corrects','Clearly disrupted structure across multiple areas','Near-total breakdown of self-care routines'] },
+      { name: 'Social Functioning', desc: 'Rate interpersonal engagement, withdrawal, conflict.',
+        anchors: ['Healthy social engagement','Mild withdrawal or occasional friction','Significant isolation or relationship strain','Near-complete social breakdown'] },
+      { name: 'Avoidance-Driven Coping / Risk Coping', desc: 'Substances, compulsions, self-harm, impulsive behaviours used to manage distress.',
+        anchors: ['No maladaptive coping','Occasional use, limited impact','Regular pattern causing harm','Dominant coping strategy, severe consequences'] },
+      { name: 'Consistency of Functioning', desc: 'How stable is day-to-day performance?',
+        anchors: ['Stable and reliable','Mild fluctuation','Significant inconsistency / "good days and bad days"','Wildly unpredictable / unable to sustain any routine'] }
     ],
     patterns: ['Underfunctioning', 'Dyscontrol', 'Avoidance', 'Mixed'],
     redFlags: 'job loss risk, academic collapse, self-neglect, escalating substance use, domestic aggression'
@@ -137,22 +137,22 @@ const LAYERS = [
   {
     id: 'L4',
     title: 'L4 — Cognitive Appraisal',
-    intro: 'How is reality being interpreted?',
+    intro: 'How is reality being interpreted in a way that sustains distress?',
     items: [
-      { name: 'Negative Attribution', desc: '“I am defective / it is always my fault”',
-        anchors: ['Balanced self-view','Occasional self-blame','Frequent self-defect','Pervasive “my fault”'] },
-      { name: 'Catastrophic Prediction', desc: 'expects disaster/failure',
-        anchors: ['Realistic','Mild worst-case','Frequent disaster expectations','Constant catastrophe'] },
-      { name: 'Harsh Self-Attack', desc: 'cruel inner critic',
-        anchors: ['Self-compassionate','Mildly critical','Regular harsh critic','Brutal self-abuse'] },
-      { name: 'Threat Bias', desc: 'neutral events seen as rejection/danger',
-        anchors: ['Neutral interpretation','Mild suspicion','Frequent negative reading','Strong danger/rejection'] },
-      { name: 'Rumination', desc: 'loops/replays difficult to stop',
-        anchors: ['Rare loops','Occasional replaying','Daily, interruptible','Hours/day, hard to stop'] },
-      { name: 'Cognitive Rigidity', desc: 'cannot generate alternative views',
-        anchors: ['Flexible','Mild stubbornness','Struggles with alternatives','Fixed, no alternative'] },
-      { name: 'Emotional Reasoning', desc: '“I feel bad therefore it is bad”',
-        anchors: ['Facts separate from feelings','Occasional fusion','Frequent feel = fact','Dominant style'] }
+      { name: 'Negative Self Appraisal (Beck Self Node)', desc: '“I am defective / inferior / burden / failure.”',
+        anchors: ['Realistic self-view','Occasional self-doubt','Frequent negative self-attribution','Fixed belief of defectiveness / worthlessness'] },
+      { name: 'Negative Future Prediction (Beck Future Node)', desc: '“Things won’t improve / disaster is coming / no point trying.”',
+        anchors: ['Realistic future outlook','Occasional pessimism','Frequent hopeless predictions','Fixed conviction that the future is catastrophic / pointless'] },
+      { name: 'Threat Interpretation Bias (Anxiety / Paranoia Spectrum)', desc: 'Neutral events seen as rejection, criticism, danger.',
+        anchors: ['Interprets events proportionally','Occasional threat over-reading','Regular misinterpretation of neutral cues as threatening','Pervasive threat perception / paranoid register'] },
+      { name: 'Harsh Inner Critic (Schema + Self-Esteem)', desc: 'Cruel self-talk, guilt attacks, perfectionistic punishment.',
+        anchors: ['Self-talk is fair and balanced','Mildly self-critical','Frequent harsh self-attacks / guilt spirals','Relentless punitive inner voice'] },
+      { name: 'Rumination / Replay Loop', desc: 'Repetitive thinking that feels hard to stop.',
+        anchors: ['Thoughts flow and release normally','Occasional loops, can redirect','Frequent stuck loops affecting mood / sleep','Constant rumination / replay dominating mental life'] },
+      { name: 'Cognitive Rigidity', desc: 'Cannot generate alternative explanations.',
+        anchors: ['Flexible thinking, considers alternatives','Slightly fixed but open to reframing','Difficulty seeing other perspectives even when prompted','Completely locked into one interpretation'] },
+      { name: 'Emotional Reasoning', desc: '“I feel it, therefore it must be true.”',
+        anchors: ['Distinguishes feelings from facts','Occasional emotional reasoning','Regularly treats emotions as evidence','Emotions fully dictate reality assessment'] }
     ],
     patterns: ['Negative bias', 'Rumination dominant', 'Distortion dominant', 'Mixed'],
     redFlags: 'hopelessness, fixed worthlessness, paranoia-like misinterpretation, relentless guilt'
@@ -160,22 +160,22 @@ const LAYERS = [
   {
     id: 'L5',
     title: 'L5 — Narrative Identity',
-    intro: 'What story has formed?',
+    intro: 'What deeper identity patterns, relational wounds, or meaning structures are sustaining distress beyond symptoms?',
     items: [
-      { name: 'Core Identity Injury', desc: 'failure / burden / broken / outsider',
-        anchors: ['Stable positive/neutral','Mild insecurity','Recurrent “I’m flawed”','Dominated by defectiveness'] },
-      { name: 'Repeated Life Role', desc: 'invisible one / rescuer / problem one / rejected one',
-        anchors: ['Flexible roles','Occasional repeating','Clear recurring pattern','Rigidly trapped'] },
-      { name: 'Conditional Worth', desc: 'only valuable when achieving/pleasing',
-        anchors: ['Independent of performance','Mild approval dependence','Strongly conditional','Only via approval/achievement'] },
-      { name: 'Meaning of Suffering', desc: 'punishment / weakness / doomed / growthless',
-        anchors: ['Growth/neutral','Mildly negative','Punishment/weakness','Completely doomed'] },
-      { name: 'Future Self Hopelessness', desc: 'expects no meaningful improvement',
-        anchors: ['Hopeful','Uncertain','Pessimistic','No meaningful future'] },
-      { name: 'Belonging Disturbance', desc: 'feels unwanted, disconnected, unsafe',
-        anchors: ['Connected','Mild outsider','Frequent disconnection','Profound alienation'] },
-      { name: 'Story Rigidity', desc: 'cannot revise identity despite evidence',
-        anchors: ['Updates with evidence','Mild fixed labels','Recurrent rigid story','Completely fused'] }
+      { name: 'Core Identity Injury', desc: '“Who I am has been damaged / I don’t know who I am.”',
+        anchors: ['Stable sense of self','Mild identity uncertainty','Significant identity confusion or injury','Shattered / absent sense of self'] },
+      { name: 'Repeated Life Role', desc: 'Stuck in a role: caretaker, scapegoat, pleaser, invisible one.',
+        anchors: ['Flexible role engagement','Mild pattern awareness','Clearly stuck in a rigid life role','Role dominates all relationships and decisions'] },
+      { name: 'Conditional Worth', desc: '“I am only valuable if I achieve / please / perform.”',
+        anchors: ['Unconditional self-worth','Mild performance-linked worth','Worth strongly dependent on external validation','Total worth contingent on conditions'] },
+      { name: 'Meaning of Suffering', desc: '“Why is this happening to me?” — punishment, karma, deserved, random, purposeful.',
+        anchors: ['Makes constructive meaning or accepts uncertainty','Mild distress about meaning','Suffering feels punishing or meaningless','Fixed belief that suffering is deserved / inescapable'] },
+      { name: 'Future Self Hopelessness', desc: 'Cannot imagine a better version of self.',
+        anchors: ['Can envision positive future self','Mild difficulty imagining improvement','Significant hopelessness about personal change','Complete inability to imagine a better self'] },
+      { name: 'Belonging Disturbance', desc: '“I don’t fit anywhere / no one truly gets me.”',
+        anchors: ['Feels connected and belonging','Occasional loneliness','Persistent alienation or disconnection','Profound isolation / no felt belonging'] },
+      { name: 'Story Rigidity', desc: 'Stuck in one narrative about life, unable to reauthor.',
+        anchors: ['Flexible life narrative','Mild rigidity in self-story','Life story feels fixed and unchangeable','Completely trapped in one narrative'] }
     ],
     patterns: ['Identity wound', 'Trauma/theme dominant', 'Belonging dominant', 'Mixed'],
     redFlags: 'total hopeless identity, self-hate core, repeated destructive relationship pattern, chronic emptiness'
